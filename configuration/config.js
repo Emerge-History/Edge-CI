@@ -1,31 +1,36 @@
 var fs = require("fs");
 var path = require("path");
+var fsextra = require("fs-extra");
 
 var root_path = process.env.ROOT_PATH || path.join(__dirname, "..");
 var mapping = require(path.join(root_path, "configuration/mapping.json"));
 var config_dir = path.join(root_path, "configuration/bases");
 var new_line = "\n";
 
-function __file_by_conf_name(conf_name) {
+function __base_file_by_conf_name(conf_name) {
     if(!mapping.hasOwnProperty(conf_name)) {
         throw new Error("Unsupported config type: " + conf_name);
     }
     return path.join(config_dir, mapping[conf_name].base);
 }
+function __to_file_by_conf_name(conf_name) {
+    if(!mapping.hasOwnProperty(conf_name)) {
+        throw new Error("Unsupported config type: " + conf_name);
+    }
+    return mapping[conf_name].to;
+}
 function __conf_from_file(conf_name) {
-    return fs.readFileSync(__file_by_conf_name(conf_name));
+    return fs.readFileSync(__base_file_by_conf_name(conf_name)).toString();
 }
 function __parse_rows(conf_name) {
     var conf = __conf_from_file(conf_name);
     var rows = conf.trim(new_line).split(new_line);
     var splitter = mapping[conf_name].splitter;
     var confs = {};
-    for(var row in rows) {
-        var parts = row.split(splitter);
-        var c = {};
-        c[parts[0]] = c[parts[0]] || [];
-        c[parts[0]].push(parts.length > 1 ? parts[1] : parts[0]);
-        confs.push(c);
+    for(var i in rows) {
+        var parts = rows[i].split(splitter);
+        confs[parts[0]] = confs[parts[0]] || [];
+        confs[parts[0]].push(parts.length > 1 ? parts[1] : parts[0]);
     }
     return confs;
 }
@@ -54,9 +59,12 @@ function write_to(conf_name, configs, cb) {
             }
         }
     }
-    var file = __file_by_conf_name(conf_name);
+    var file_path = __to_file_by_conf_name(conf_name);
+    var dir = path.dirname(file_path);
+    if(!fs.existsSync(dir))
+        fsextra.mkdirsSync(dir);
     cb = cb || function(){};
-    fs.writeFile(file, rows.join("\n"), cb);
+    fs.writeFile(file_path, rows.join(new_line), cb);
 }
 
 module.exports.read = from_base;
