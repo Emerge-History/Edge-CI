@@ -1,0 +1,20 @@
+{
+  "name": "emerge-ci",
+  "version": "0.0.1",
+  "description": "Edge configuration interface",
+  "repository": "emerge/Edge-CI",
+  "scripts": {
+    "start": "node ./bin/eci"
+  },
+  "preferGlobal": "true",
+  "dependencies": {
+    "optimist": "0.6.1",
+    "underscore": "1.8.3",
+    "colors": "1.0.3",
+    "fs-extra": "0.22.1",
+    "uuid": "2.0.1"
+  },
+  "bin": {
+    "edge-emu": "./bin/eci"
+  }
+}
