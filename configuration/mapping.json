@@ -1,0 +1,17 @@
+{
+  "hostapd_2g": {
+    "base": "hostapd_2g.conf",
+    "to": "/etc/config/hostapd_2g.conf",
+    "splitter": "="
+  },
+  "hostapd_5g": {
+    "base": "hostapd_5g.conf",
+    "to": "/etc/config/hostapd_5g.conf",
+    "splitter": "="
+  },
+  "dnsmasq": {
+    "base": "dnsmasq.conf",
+    "to": "/etc/config/dnsmasq.conf",
+    "splitter": "="
+  }
+}
